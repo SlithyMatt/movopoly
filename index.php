@@ -13,6 +13,7 @@
 </head>
 <body>
 
+
 <!-- Start of first page: #one -->
 <div data-role="page" id="one">
 
@@ -22,43 +23,48 @@
 
 	<div role="main" class="ui-content">
 		<h2>Would you like to play a game?</h2>
-		<h3>Show internal pages:</h3>
-		<p><a href="#two" class="ui-button ui-shadow ui-corner-all">Show page "two"</a></p>
-		<p><a href="#popup" class="ui-button ui-shadow ui-corner-all" data-rel="dialog" data-transition="pop">Show page "popup" (as a dialog)</a></p>
+		<a href="newgame.php">Start a New Game</a>
+
+		<?php
+			$servername = "localhost";
+			$username = "movopoly";
+			$password = "m0v0p0ly";
+			$dbname = "movopoly";
+
+			// Create connection
+			$conn = new mysqli($servername, $username, $password, $dbname);
+			// Check connection
+			if ($conn->connect_error) {
+			  die("Connection failed: " . $conn->connect_error);
+			}
+
+			$sql = "SELECT id, name, started FROM games";
+			$result = $conn->query($sql);
+
+			$pending = array();
+			$started = array();
+
+			while ($row = $result->fetch_assoc()) {
+				if (is_null($row["started"])) {
+					array_push($pending,$row);
+				} else {
+					array_push($started,$row);
+				}
+			}
+
+			if (count($pending) > 0) {
+
+			}
+
+			if (count($started) > 0) {
+				
+			}
+		?>
+
 	</div><!-- /content -->
 
 </div><!-- /page one -->
 
-<!-- Start of second page: #two -->
-<div data-role="page" id="two" data-theme="a">
-
-	<div data-role="toolbar" data-type="header">
-		<h1>Two</h1>
-	</div><!-- /header -->
-
-	<div role="main" class="ui-content">
-		<h2>Two</h2>
-		<p><a href="#one" data-direction="reverse" class="ui-button ui-shadow ui-corner-all ui-button-b">Back to page "one"</a></p>
-
-	</div><!-- /content -->
-
-</div><!-- /page two -->
-
-<!-- Start of third page: #popup -->
-<div data-role="page" id="popup">
-
-	<div data-role="toolbar" data-type="header" data-theme="b">
-		<h1>Chance</h1>
-	</div><!-- /header -->
-
-	<div role="main" class="ui-content">
-		<h2>You won a Beauty Contest.</h2>
-		<h3>Collect $50</h3>
-		<p><a href="#one" data-rel="back" class="ui-button ui-shadow ui-corner-all ui-button-inline">Back to page "one" <span class="ui-icon ui-icon-back"></span></a></p>
-	</div><!-- /content -->
-
-
-</div><!-- /page popup -->
 
 </body>
 </html>
