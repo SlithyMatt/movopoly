@@ -5,10 +5,20 @@
 	<title>New Game - Movopoly</title>
 	<link rel="stylesheet" href="/jqm/css/themes/default/jquery.mobile.css">
 	<link rel="stylesheet" href="/jqm/demos/_assets/css/jqm-demos.css">
-	<link rel="shortcut icon" href="../favicon.ico">
+	<link rel="stylesheet" href="movopoly.css">
+	<link rel="shortcut icon" href="favicon.ico">
 	<script src="/jqm/external/jquery/jquery.js"></script>
-	<script src="/jqm/demos/_assets/js/"></script>
+	<script src="/jqm/external/jquery-ui/jquery.js"></script>
 	<script src="/jqm/js/"></script>
+	<script>
+		function go_home() {
+			window.open("index.php","_self");
+		}
+
+		$(document).ready(function() {
+
+		});
+	</script>
 </head>
 <body>
 
@@ -22,7 +32,10 @@
 
 	<div role="main" class="ui-content">
 		<h2>Start a New Game</h2>
-
+		<label for="name-txt">Give your game a name:</label>
+		<input type="text" name="name-txt" id="name-txt" value="">
+		<button class="ui-button-inline" id="cancel-btn" onclick="go_home()">Cancel</button>
+		<button class="ui-button-inline" id="start-btn">Start</button>
 
 	</div><!-- /content -->
 

@@ -55,14 +55,14 @@
 			if (count($pending) > 0) {
 				echo "<h3>Join a Game</h3>";
 				foreach($pending as $game) {
-					echo "<a href=\"join.php?id=", $game["id"], "\">", $game["name"], "</a><br>"
+					echo "<a href=\"join.php?id=", $game["id"], "\">", $game["name"], "</a><br>";
 				}
 			}
 
 			if (count($started) > 0) {
 				echo "<h3>Return to a Game</h3>";
 				foreach($started as $game) {
-					echo "<a href=\"return.php?id=", $game["id"], "\">", $game["name"], "</a><br>"
+					echo "<a href=\"return.php?id=", $game["id"], "\">", $game["name"], "</a><br>";
 				}
 			}
 		?>
