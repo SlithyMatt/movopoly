@@ -1,0 +1,61 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>New Game - Movopoly</title>
+	<link rel="stylesheet" href="movopoly.css">
+	<link rel="shortcut icon" href="favicon.ico">
+	<link rel="stylesheet" href="lib/jquery-ui.css">
+	<script src="lib/jquery.js"></script>
+	<script src="lib/jquery-ui.js"></script>
+	<script src="cookies.js"></script>
+	<script src="movopoly.js"></script>
+</head>
+<body>
+
+
+	<div id="fat-title-bar">
+		<img src="movopoly_logo_small.png" />
+	</div>
+
+	<div class="latent" id="thin-title-bar">
+		<img src="movopoly_logo_small.png" />
+	</div>
+
+	<div id="welcome">
+		<div class="latent" id="welcome-back">
+			<h2>Welcome Back, <span class="username"></span>!</h2>
+			Is this still your name?
+		</div>
+		<div class "latent" id="new-user">
+			<h2>Welcome!</h2>
+			<div class="ui-widget padded">
+				<label for="username-txt">What's you name?</label><br>
+				<input type="text" name="username-txt" id="username-txt" value="">
+			</div>
+		</div>
+	</div>
+
+	<div class="latent" id="select-game">
+		<h2>Would you like to play a game?</h2>
+		<button class="ui-button" id="go-new-btn">Start a New Game</a>
+	</div>
+
+	<div class="latent" id="new-game">
+		<h1>Start a New Game</h1>
+		<div class="ui-widget padded">
+			<label for="game-name-txt">Give your game a name:</label><br>
+			<input type="text" name="game-name-txt" id="game-name-txt" value="">
+		</div>
+	</div>
+
+	<button class="ui-button-inline latent" id="cancel-btn">Cancel</button>
+	<button class="ui-button-inline latent" id="start-btn">Start</button>
+	<button class="ui-button-inline latent" id="clear-btn">Clear</button>
+	<button class="ui-button-inline latent" id="submit-btn">Submit</button>
+	<button class="ui-button-inline latent" id="yes-btn">Yes</button>
+	<button class="ui-button-inline latent" id="no-btn">No</button>
+
+
+</body>
+</html>

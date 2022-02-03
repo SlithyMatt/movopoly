@@ -10,10 +10,13 @@
 	<script src="lib/jquery-ui.js"></script>
 	<script>
 		$(document).ready(function() {
-			$( "button" ).button();
-			$( "#cancel-btn" ).click( function( event ) {
+			$("button").button();
+			$("#cancel-btn").click( function( event ) {
 				window.open("index.php","_self");
 			} );
+			$("#start-btn").click(function(event) {
+				
+			});
 		});
 	</script>
 </head>
@@ -21,22 +24,19 @@
 
 
 <!-- Start of first page: #one -->
-<div data-role="page" id="one">
-
-	<div data-role="toolbar" data-type="header">
+	<div>
 		<img src="movopoly_logo_small.png" />
 	</div><!-- /header -->
 
-	<div role="main" class="ui-content">
-		<h2>Start a New Game</h2>
-		<label for="name-txt">Give your game a name:</label>
-		<input type="text" name="name-txt" id="name-txt" value=""><br>
+	<div>
+		<h1>Start a New Game</h1>
+		<div class="ui-widget padded">
+			<label for="name-txt">Give your game a name:</label><br>
+			<input type="text" name="name-txt" id="name-txt" value="">
+		</div>
 		<button class="ui-button-inline" id="cancel-btn">Cancel</button>
 		<button class="ui-button-inline" id="start-btn">Start</button>
-
 	</div><!-- /content -->
-
-</div><!-- /page one -->
 
 
 </body>
