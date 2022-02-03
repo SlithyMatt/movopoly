@@ -3,20 +3,17 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>New Game - Movopoly</title>
-	<link rel="stylesheet" href="/jqm/css/themes/default/jquery.mobile.css">
-	<link rel="stylesheet" href="/jqm/demos/_assets/css/jqm-demos.css">
 	<link rel="stylesheet" href="movopoly.css">
 	<link rel="shortcut icon" href="favicon.ico">
-	<script src="/jqm/external/jquery/jquery.js"></script>
-	<script src="/jqm/external/jquery-ui/jquery.js"></script>
-	<script src="/jqm/js/"></script>
+	<link rel="stylesheet" href="lib/jquery-ui.css">
+	<script src="lib/jquery.js"></script>
+	<script src="lib/jquery-ui.js"></script>
 	<script>
-		function go_home() {
-			window.open("index.php","_self");
-		}
-
 		$(document).ready(function() {
-
+			$( "button" ).button();
+			$( "#cancel-btn" ).click( function( event ) {
+				window.open("index.php","_self");
+			} );
 		});
 	</script>
 </head>
@@ -33,8 +30,8 @@
 	<div role="main" class="ui-content">
 		<h2>Start a New Game</h2>
 		<label for="name-txt">Give your game a name:</label>
-		<input type="text" name="name-txt" id="name-txt" value="">
-		<button class="ui-button-inline" id="cancel-btn" onclick="go_home()">Cancel</button>
+		<input type="text" name="name-txt" id="name-txt" value=""><br>
+		<button class="ui-button-inline" id="cancel-btn">Cancel</button>
 		<button class="ui-button-inline" id="start-btn">Start</button>
 
 	</div><!-- /content -->

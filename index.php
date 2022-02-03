@@ -4,12 +4,12 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Movopoly</title>
-	<link rel="stylesheet" href="/jqm/css/themes/default/jquery.mobile.css">
-	<link rel="stylesheet" href="/jqm/demos/_assets/css/jqm-demos.css">
-	<link rel="shortcut icon" href="../favicon.ico">
-	<script src="/jqm/external/jquery/jquery.js"></script>
-	<script src="/jqm/demos/_assets/js/"></script>
-	<script src="/jqm/js/"></script>
+	<link rel="shortcut icon" href="favicon.ico">
+	<link rel="stylesheet" href="lib/jquery-ui.css">
+	<script src="lib/jquery.js"></script>
+	<script src="lib/jquery-ui.js"></script>
+	<script>
+	</script>
 </head>
 <body>
 
