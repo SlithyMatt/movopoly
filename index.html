@@ -26,10 +26,7 @@
 
 	<div class="latent" id="new-user">
 		<h2>Welcome!</h2>
-		<div class="ui-widget padded">
-			<label for="username-txt">What's your name?</label><br>
-			<input type="text" name="username-txt" id="username-txt" value="">
-		</div>
+		<h3>What's your name?</h3>
 	</div>
 
 	<div class="latent" id="select-game">
@@ -51,10 +48,16 @@
 
 	<button class="ui-button-inline latent" id="cancel-btn">Cancel</button>
 	<button class="ui-button-inline latent" id="start-btn">Start</button>
-	<button class="ui-button-inline latent" id="clear-btn">Clear</button>
-	<button class="ui-button-inline latent" id="submit-btn">Submit</button>
 	<button class="ui-button-inline latent" id="yes-btn">Yes</button>
 	<button class="ui-button-inline latent" id="no-btn">No</button>
+
+	<div id="text-form" class="latent">
+		<div class="ui-widget padded">
+			<input type="text" id="text-form-input" name="text-form-input" value="">
+		</div>
+		<button class="ui-button-inline" id="clear-btn">Clear</button>
+		<button class="ui-button-inline" id="submit-btn">Submit</button>
+	</div>
 
 	<!-- Dialogs -->
 	<div id="no-name-dlg" class="msg-dlg">

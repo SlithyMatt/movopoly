@@ -6,12 +6,9 @@ function reset() {
 
 function newName() {
    reset();
-   $("#new-user, #clear-btn, #submit-btn").show();
-   $("#clear-btn").click(function() {
-      $("#username-txt").val("");
-   });
+   $("#new-user, #text-form").show();
    $("#submit-btn").click(function() {
-      let username = $(this).val();
+      let username = $("#text-form-input").val();
       if (username != "") {
          const d = new Date();
          d.setTime(d.getTime() + 366*24*60*60*1000);
@@ -26,7 +23,7 @@ function newName() {
 function selectGame() {
    reset();
    $("#select-game").show();
-   $("#go-new-button").click(function() {
+   $("#go-new-btn").click(function() {
       newGame();
    });
 }
@@ -59,10 +56,19 @@ $(document).ready(function() {
          }
       ]
    });
+   $("#clear-btn").click(function() {
+      $("#text-form-input").val("");
+   });
+   $("#text-form-input").keypress(function(event) {
+      let keycode = (event.keyCode ? event.keyCode : event.which);
+      if(keycode == '13') {
+         $("#submit-btn").click();
+      }
+   });
 
    let username = getCookie("username");
    if (username != "") {
-      $("#welcome-back, #yes-btn, #no-btn").addClass("revealed");
+      $("#welcome-back, #yes-btn, #no-btn").show();
       $("#yes-btn").click(selectGame);
       $("#no-btn").click(newName);
    } else {
