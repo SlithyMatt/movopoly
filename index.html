@@ -8,6 +8,7 @@
 	<link rel="stylesheet" href="lib/jquery-ui.css">
 	<script src="lib/jquery.js"></script>
 	<script src="lib/jquery-ui.js"></script>
+	<script src="lib/jquery.md5.js"></script>
 	<script src="cookies.js"></script>
 	<script src="movopoly.js"></script>
 </head>
@@ -19,14 +20,14 @@
 		<!-- TODO: Overlay When thin logo is inserted -->
 	</div>
 
-	<div class="latent" id="welcome-back">
+	<div class="ui-widget latent" id="welcome-back">
 		<h2>Welcome Back, <span class="username"></span>!</h2>
 		Is this still your name?
 	</div>
 
-	<div class="latent" id="new-user">
+	<div class="ui-widget latent" id="new-user">
 		<h2>Welcome!</h2>
-		<h3>What's your name?</h3>
+		What's your name?
 	</div>
 
 	<div class="latent" id="select-game">
@@ -55,8 +56,8 @@
 		<div class="ui-widget padded">
 			<input type="text" id="text-form-input" name="text-form-input" value="">
 		</div>
-		<button class="ui-button-inline" id="clear-btn">Clear</button>
-		<button class="ui-button-inline" id="submit-btn">Submit</button>
+		<button class="ui-button-inline ui-widget" id="clear-btn"><span class="ui-icon ui-icon-cancel"></span>Clear</button>
+		<button class="ui-button-inline ui-widget" id="submit-btn"><span class="ui-icon ui-icon-check"></span>Submit</button>
 	</div>
 
 	<!-- Dialogs -->
@@ -64,8 +65,17 @@
 		Please enter a name.
 	</div>
 
-	<div id="name-taken-dlg" class="msg-dlg">
-		Sorry, but <span id="name">?</span> is already playing with another device.<br>
+	<div id="error-dlg" class="msg-dlg">
+		Error Code <span id="error-code"></span><br>
+		Meaning: <span id="error-text"></span><br>
+		&nbsp;<br>
+		Try again later.
+	</div>
+
+	<div id="name-error-dlg" class="msg-dlg">
+		Sorry, you can't use that name.<br>
+		Reason: <span id="name-error-reason"></span><br>
+		&nbsp;<br>
 		Please choose a different name.
 	</div>
 

@@ -10,11 +10,12 @@ function newName() {
    $("#submit-btn").click(function() {
       let username = $("#text-form-input").val();
       if (username != "") {
-         // TODO Check for HTML tags
-         const d = new Date();
-         d.setTime(d.getTime() + 366*24*60*60*1000);
-         document.cookie = "username=" + username + ";expires=" + d.toUTCString();
-         selectGame();
+         if (username.includes("<") || (username.includes(">"))) {
+            nameErrorDialog("Names cannot include &lt; or &gt; characters");
+         } else {
+            refreshCookie(username);
+            selectGame();
+         }
       } else {
          $("#no-name-dlg").dialog("open");
       }
@@ -29,16 +30,59 @@ function selectGame() {
    });
 }
 
+function refreshCookie(username) {
+   username = (typeof username === "string")? username : getCookie("username");
+   const d = new Date();
+   d.setTime(d.getTime() + 366*24*60*60*1000);
+   let expires = d.toUTCString()
+   let hash = getCookie("hash");
+   if (hash == "") {
+      hash = $.md5(username + expires);
+   }
+   document.cookie = "username=" + username + ";hash=" + hash + ";expires=" + expires;
+}
+
 function newGame() {
    reset();
    $("#new-game, #cancel-btn, #start-btn").show();
+   refreshCookie();
 
    $("#cancel-btn").click(function() {
       selectGame();
    });
    $("#start-btn").click(function() {
-      // TODO attempt to start game
+      let gameName = $("#game-name-txt").val();
+      if (gameName != "") {
+         $.post("newgame.php", {
+            originatorName: getCookie("username"),
+            originatorHash: getCookie("hash"),
+            gameName: gameName
+         }, function() {
+            waitGame(gameName);
+         }).fail(function(xhr) {
+            if (xhr.status == 400) {
+               nameErrorDialog("Name is invalid");
+            } else if (xhr.status == 409) {
+               nameErrorDialog("Name is already being used");
+            } else {
+               errorDialog(xhr);
+            }
+         });
+      } else {
+         $("#no-name-dlg").dialog("open");
+      }
    })
+}
+
+function waitGame(gameName) {
+   reset();
+
+}
+
+function errorDialog (xhr) {
+   $("#error-code").html(xhr.status);
+   $("#error-text").html(xhr.responseText)
+   $("#error-dlg").dialog("open");
 }
 
 $(document).ready(function() {

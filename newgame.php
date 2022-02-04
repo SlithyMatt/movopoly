@@ -11,8 +11,43 @@
 	  die("Connection failed: " . $conn->connect_error);
 	}
 
-	$sql = "SELECT id, name, started FROM games";
-	$result = $conn->query($sql);
+	if ($_SERVER["REQUEST_METHOD"] == "POST") {
+		$gamename = $_REQUEST["gameName"];
+		// check for validity
+		// TODO prevent SQL insertion
+		if ((stripos($gamename,"<") != FALSE) || (stripos($gamename,">") != FALSE)) {
+			http_response_code(400);
+			die("Invalid Name: " . $gamename);
+		}
 
+		// check for other game with the same name
+		$sql = "SELECT name FROM games";
+		$result = $conn->query($sql);
+		$match = FALSE;
+		if ($result->num_rows > 0) {
+  			while (($row = $result->fetch_assoc()) && !$match) {
+				if (strcmp($gamename,$row["name"]) == 0) {
+					$match = TRUE;
+				}
+			}
+		}
+		if ($match) {
+			http_response_code(409);
+			die("Name already being used: " . $gamename);
+		}
 
+		$sql = "INSERT INTO games (name,originator) VALUES ("
+			. $gamename . ","
+			. $_REQUEST["originatorHash"] . ")";
+		$conn->query($sql);
+
+		$sql = "INSERT INTO players(name,hash,game) VALUES ("
+			. $_REQUEST["originatorName"] . ","
+			. $_REQUEST["originatorHash"] . ","
+			. $gamename . ")";
+		$conn->query($sql);
+
+	} else if ($_SERVER["REQUEST_METHOD"] == "GET") {
+
+	}
 ?>
