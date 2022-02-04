@@ -10,6 +10,7 @@ function newName() {
    $("#submit-btn").click(function() {
       let username = $("#text-form-input").val();
       if (username != "") {
+         // TODO Check for HTML tags
          const d = new Date();
          d.setTime(d.getTime() + 366*24*60*60*1000);
          document.cookie = "username=" + username + ";expires=" + d.toUTCString();
@@ -42,6 +43,7 @@ function newGame() {
 
 $(document).ready(function() {
    // init UI components
+   reset();
    $("button").button();
    $(".msg-dlg").dialog({
       autoOpen: false,
@@ -68,6 +70,7 @@ $(document).ready(function() {
 
    let username = getCookie("username");
    if (username != "") {
+      $(".username").html(username);
       $("#welcome-back, #yes-btn, #no-btn").show();
       $("#yes-btn").click(selectGame);
       $("#no-btn").click(newName);
