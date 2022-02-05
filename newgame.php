@@ -36,18 +36,24 @@
 			die("Name already being used: " . $gamename);
 		}
 
-		$sql = "INSERT INTO games (name,originator) VALUES ("
-			. $gamename . ","
-			. $_REQUEST["originatorHash"] . ")";
+		$sql = "INSERT INTO games (name,originator) VALUES (\""
+			. $gamename . "\",\""
+			. $_REQUEST["originatorHash"] . "\")";
 		$conn->query($sql);
 
-		$sql = "INSERT INTO players(name,hash,game) VALUES ("
-			. $_REQUEST["originatorName"] . ","
-			. $_REQUEST["originatorHash"] . ","
-			. $gamename . ")";
+		$sql = "INSERT INTO players(id,name,hash,game) VALUES (uuid(),\""
+			. $_REQUEST["originatorName"] . "\",\""
+			. $_REQUEST["originatorHash"] . "\",\""
+			. $gamename . "\")";
 		$conn->query($sql);
 
 	} else if ($_SERVER["REQUEST_METHOD"] == "GET") {
-
+		$sql = "SELECT name FROM games";
+		$result = $conn->query($sql);
+		$games = array();
+		while ($row = $result->fetch_assoc()) {
+			array_push($games,$row["name"]);
+		}
+		echo json_encode($games);
 	}
 ?>

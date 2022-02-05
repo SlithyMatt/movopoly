@@ -2,7 +2,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>New Game - Movopoly</title>
+	<title>Movopoly</title>
 	<link rel="stylesheet" href="movopoly.css">
 	<link rel="shortcut icon" href="favicon.ico">
 	<link rel="stylesheet" href="lib/jquery-ui.css">
@@ -32,9 +32,9 @@
 
 	<div class="latent" id="select-game">
 		<h2>Would you like to play a game?</h2>
-		<button class="ui-button" id="go-new-btn">Start a New Game</a>
-		<div id="pending-games"></div>
-		<div id="active-games"></div>
+		<button class="ui-button" id="go-new-btn">Start a New Game</button>
+		<div id="pending-games" class="ui-widget padded"></div>
+		<div id="active-games" class="ui-widget padded"></div>
 	</div>
 
 	<div class="latent" id="new-game">
@@ -43,6 +43,12 @@
 			<label for="game-name-txt">Give your game a name:</label><br>
 			<input type="text" name="game-name-txt" id="game-name-txt" value="">
 		</div>
+	</div>
+
+	<div class="ui-widget latent" id="waiting-room">
+		<h2>Waiting for players...</h2>
+		<h3>Joined so far:</h3>
+		<ul id="waiting-players"></ul>
 	</div>
 
 	<!-- Reused UI Elements -->

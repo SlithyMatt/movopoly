@@ -13,7 +13,7 @@ function newName() {
          if (username.includes("<") || (username.includes(">"))) {
             nameErrorDialog("Names cannot include &lt; or &gt; characters");
          } else {
-            refreshCookie(username);
+            refreshCookies(username);
             selectGame();
          }
       } else {
@@ -25,27 +25,47 @@ function newName() {
 function selectGame() {
    reset();
    $("#select-game").show();
+   let getPending = function() {
+      $.getJSON("newgame.php", function(games) {
+         $("#pending-games").empty();
+         if (games.length > 0) {
+            $("#pending-games").append("<h3>Games waiting to start:</h3>");
+            for (let i=0; i < games.length; i++) {
+               $("#pending-games").append(
+                  "<button class=\"ui-button-inline pending-btn\" id=\"pending" + i +
+                  "\">Join</button> " + games[i] + "<br>");
+            }
+            $(".pending-btn").button().click(function() {
+               let index = $(this).attr("id").substr(7);
+               waitGame(games[index]);
+            });
+         }
+      });
+   };
+   getPending();
+   setInterval(getPending, 1000);
    $("#go-new-btn").click(function() {
       newGame();
    });
 }
 
-function refreshCookie(username) {
+function refreshCookies(username) {
    username = (typeof username === "string")? username : getCookie("username");
    const d = new Date();
    d.setTime(d.getTime() + 366*24*60*60*1000);
    let expires = d.toUTCString()
+   document.cookie = "username=" + username + ";expires=" + expires;
    let hash = getCookie("hash");
    if (hash == "") {
       hash = $.md5(username + expires);
    }
-   document.cookie = "username=" + username + ";hash=" + hash + ";expires=" + expires;
+   document.cookie = "hash=" + hash + ";expires=" + expires;
 }
 
 function newGame() {
    reset();
    $("#new-game, #cancel-btn, #start-btn").show();
-   refreshCookie();
+   refreshCookies();
 
    $("#cancel-btn").click(function() {
       selectGame();
