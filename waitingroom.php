@@ -10,24 +10,29 @@
 	if ($conn->connect_error) {
 	  die("Connection failed: " . $conn->connect_error);
 	}
-	
+
 	if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		$action = $_REQUEST["action"];
 		$game = $_REQUEST["game"];
 		$hash = $_REQUEST["hash"];
-		$sql = "SELECT originator FROM games WHERE game='" . $game . "'";
+		$sql = "SELECT originator,started FROM games WHERE name='" . $game . "'";
 		$result = $conn->query($sql);
 
 		if ($result->num_rows == 0) {
 			http_response_code(400);
 			die("Unknown game: " . $game);
 		}
-		if ($hash != $result->fetch_assoc()["originator"]) {
+		$row = $result->fetch_assoc();
+		if ($hash != $row["originator"]) {
 			http_response_code(403);
 			die("You are not authorized to modify game: " . $game);
 		}
 		switch ($action) {
 			case "start":
+				if ($row["started"] != NULL) {
+					http_response_code(403);
+					die("Game is already started: " . $game);
+				}
 				$sql = "SELECT id,hash FROM players WHERE game='" . $game . "'";
 				$result = $conn->query($sql);
 
@@ -44,6 +49,11 @@
 						array_push($players,$row["id"]);
 					}
 				}
+				$time = date("Y-m-d H:i:s");
+				$sql = "UPDATE games SET current='" . $players[0]
+					. "', started='" . $time . "' WHERE name='" . $game . "'";
+				$conn->query($sql);
+
 				for ($i = 0; $i < $num_players-1; $i++) {
 					$sql = "UPDATE players SET next='" . $players[i+1]
 						. "' WHERE id='" . $players[i] . "'";
@@ -53,10 +63,7 @@
 					. "' WHERE id='" . $players[$num_players-1] . "'";
 				$conn->query($sql);
 
-				$time = date("Y-m-d H:i:s");
-				$sql = "UPDATE games SET current='" . $players[0]
-					. "', started='" . $time . "' WHERE name='" . $game . "'";
-				$conn->query($sql);
+
 				break;
 			case "cancel":
 				$sql = "DELETE FROM games WHERE name='" . $game . "'";
@@ -68,6 +75,27 @@
 				http_response_code(400);
 				die("Invalid Action: " . $action);
 		}
+	} else if ($_SERVER["REQUEST_METHOD"] == "PUT") {
+		$game = $_REQUEST["game"];
+		$hash = $_REQUEST["hash"];
+		$sql = "SELECT originator,started FROM games WHERE name='" . $game . "'";
+		$result = $conn->query($sql);
+
+		if ($result->num_rows == 0) {
+			http_response_code(400);
+			die("Unknown game: " . $game);
+		}
+		$row = $result->fetch_assoc();
+		if ($hash == $row["originator"]) {
+			http_response_code(403);
+			die("You cannot leave game you started: " . $game);
+		}
+		if ($row["started"] != NULL) {
+			http_response_code(403);
+			die("You cannot leave game in progress: " . $game);
+		}
+		$sql = "DELETE FROM players WHERE game='" . $game . "' AND hash=' . $hash ."'";
+		$conn->query($sql);
 	} else if ($_SERVER["REQUEST_METHOD"] == "GET") {
 		$game = $_REQUEST["game"];
 
