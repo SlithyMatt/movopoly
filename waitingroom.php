@@ -1,0 +1,99 @@
+<?php
+	$servername = "localhost";
+	$username = "movopoly";
+	$password = "m0v0p0ly";
+	$dbname = "movopoly";
+
+	// Create connection
+	$conn = new mysqli($servername, $username, $password, $dbname);
+	// Check connection
+	if ($conn->connect_error) {
+	  die("Connection failed: " . $conn->connect_error);
+	}
+	
+	if ($_SERVER["REQUEST_METHOD"] == "POST") {
+		$action = $_REQUEST["action"];
+		$game = $_REQUEST["game"];
+		$hash = $_REQUEST["hash"];
+		$sql = "SELECT originator FROM games WHERE game='" . $game . "'";
+		$result = $conn->query($sql);
+
+		if ($result->num_rows == 0) {
+			http_response_code(400);
+			die("Unknown game: " . $game);
+		}
+		if ($hash != $result->fetch_assoc()["originator"]) {
+			http_response_code(403);
+			die("You are not authorized to modify game: " . $game);
+		}
+		switch ($action) {
+			case "start":
+				$sql = "SELECT id,hash FROM players WHERE game='" . $game . "'";
+				$result = $conn->query($sql);
+
+				$num_players = $result->num_rows;
+				if ($num_players < 2) {
+					http_response_code(400);
+					die("Not enough players in game: " . $game);
+				}
+				$players = array();
+				while ($row = $result->fetch_assoc()) {
+					if ($row["hash"] == $hash) {
+						array_unshift($players,$row["id"]);
+					} else {
+						array_push($players,$row["id"]);
+					}
+				}
+				for ($i = 0; $i < $num_players-1; $i++) {
+					$sql = "UPDATE players SET next='" . $players[i+1]
+						. "' WHERE id='" . $players[i] . "'";
+					$conn->query($sql);
+				}
+				$sql = "UPDATE players SET next='" . $players[0]
+					. "' WHERE id='" . $players[$num_players-1] . "'";
+				$conn->query($sql);
+
+				$time = date("Y-m-d H:i:s");
+				$sql = "UPDATE games SET current='" . $players[0]
+					. "', started='" . $time . "' WHERE name='" . $game . "'";
+				$conn->query($sql);
+				break;
+			case "cancel":
+				$sql = "DELETE FROM games WHERE name='" . $game . "'";
+				$conn->query($sql);
+				$sql = "DELETE FROM players WHERE game='" . $game . "'";
+				$conn->query($sql);
+				break;
+			default:
+				http_response_code(400);
+				die("Invalid Action: " . $action);
+		}
+	} else if ($_SERVER["REQUEST_METHOD"] == "GET") {
+		$game = $_REQUEST["game"];
+
+		$sql = "SELECT originator FROM games WHERE name='" . $game . "'";
+		$result = $conn->query($sql);
+		$hash = "";
+		if ($result->num_rows > 0) {
+			$hash = $result->fetch_assoc()["originator"];
+		}
+
+		$sql = "SELECT name,hash FROM players WHERE game='" . $game . "'";
+		$result = $conn->query($sql);
+		$origname = "";
+		$players = array();
+		if ($result->num_rows > 0) {
+			while ($row = $result->fetch_assoc()) {
+				if ($row["hash"] == $hash) {
+					$origname = $row["name"];
+				}
+				array_push($players,$row["name"]);
+			}
+		}
+
+		$response = array("originatorName"=>$origname,"originatorHash"=>$hash,
+								"players"=>$players);
+
+		echo json_encode($response);
+	}
+?>

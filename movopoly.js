@@ -1,5 +1,7 @@
 "use strict";
 
+var currentLoop;
+
 function reset() {
    $(".latent").hide();
 }
@@ -13,6 +15,7 @@ function newName() {
          if (username.includes("<") || (username.includes(">"))) {
             nameErrorDialog("Names cannot include &lt; or &gt; characters");
          } else {
+            $(".username").html(username);
             refreshCookies(username);
             selectGame();
          }
@@ -24,6 +27,9 @@ function newName() {
 
 function selectGame() {
    reset();
+   $("#title-bar").css("height",77);
+   $("#banner-img").attr("src","movopoly_banner.png");
+   $(".banner-text").css("display","inline");
    $("#select-game").show();
    let getPending = function() {
       $.getJSON("newgame.php", function(games) {
@@ -36,6 +42,7 @@ function selectGame() {
                   "\">Join</button> " + games[i] + "<br>");
             }
             $(".pending-btn").button().click(function() {
+               clearInterval(currentLoop);
                let index = $(this).attr("id").substr(7);
                waitGame(games[index]);
             });
@@ -43,8 +50,9 @@ function selectGame() {
       });
    };
    getPending();
-   setInterval(getPending, 1000);
+   currentLoop = setInterval(getPending, 1000);
    $("#go-new-btn").click(function() {
+      clearInterval(currentLoop);
       newGame();
    });
 }
@@ -96,7 +104,8 @@ function newGame() {
 
 function waitGame(gameName) {
    reset();
-
+   $(".gamename").html(gameName);
+   
 }
 
 function errorDialog (xhr) {

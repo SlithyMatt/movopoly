@@ -39,3 +39,31 @@ h3 {
 .no-close .ui-dialog-titlebar-close {
   display: none;
 }
+
+.banner-text {
+   display: none;
+   position: fixed;
+   right: 14px;
+   font-weight: bold;
+   font-size: 27px;
+   color: white;
+}
+
+.banner-text-line1 {
+   top: 14px;
+}
+
+.banner-text-line2 {
+   top: 45px;
+}
+
+#title-bar {
+   height: 200;
+   background-color: rgb(20,25,98);
+   padding-bottom: .2em;
+}
+
+#banner-img {
+   top: 0;
+   left: 0;
+}
