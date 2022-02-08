@@ -1,7 +1,7 @@
 "use strict";
 
 function reset() {
-   $(".latent").hide();
+   $(".latent").hide().off("click");
    okCallback.empty();
    yesCallback.empty();
    noCallback.empty();
@@ -157,23 +157,23 @@ function waitGame(gameName) {
             $("#cancel-btn").show().click(function() {
                clearInterval(waitingLoop);
                if (status.originatorHash == hash) {
-                  $.post("waitingroom.php", {
-                     action: "cancel",
-                     game: gameName,
-                     hash: hash
-                  }, function() {
-                     yesCallback.add(selectGame);
-                     $("#cancel-game-dlg").dialog("open");
+                  yesCallback.add(function () {
+                     $.post("waitingroom.php", {
+                        action: "cancel",
+                        game: gameName,
+                        hash: hash
+                     }, selectGame);
                   });
+                  $("#cancel-game-dlg").dialog("open");
                } else {
-                  $.post("waitingroom.php", {
-                     action: "leave",
-                     game: gameName,
-                     hash: hash
-                  }, function() {
-                     yesCallback.add(selectGame);
-                     $("#leave-game-dlg").dialog("open");
+                  yesCallback.add(function () {
+                     $.post("waitingroom.php", {
+                        action: "leave",
+                        game: gameName,
+                        hash: hash
+                     }, selectGame);
                   });
+                  $("#leave-game-dlg").dialog("open");
                }
             });
          }
