@@ -13,6 +13,7 @@
 
 	if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		$game = $_REQUEST["game"];
+		$hash = $_REQUEST["hash"];
 		$sql = "SELECT * FROM games WHERE name=\"" . $game . "\"";
 		$result = $conn->query($sql);
 
@@ -21,13 +22,13 @@
 			die("Unknown game: " . $game);
 		}
 
-		$sql = "SELECT * FROM players WHERE game=\"" . $game . "\"";
+		$sql = "SELECT * FROM players WHERE game=\"" . $game . "\" AND hash=\"" . $hash . "\"";
 		$result = $conn->query($sql);
 
 		if ($result->num_rows == 0) {
 			$sql = "INSERT INTO players(id,name,hash,game) VALUES (uuid(),\""
 				. $_REQUEST["name"] . "\",\""
-				. $_REQUEST["hash"] . "\",\""
+				. $hash . "\",\""
 				. $game . "\")";
 			$conn->query($sql);
 		}

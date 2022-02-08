@@ -166,17 +166,13 @@ function waitGame(gameName) {
                      $("#cancel-game-dlg").dialog("open");
                   });
                } else {
-                  $.ajax({
-                     type: "PUT",
-                     url: "waitingroom.php",
-                     data: {
-                        game: gameName,
-                        hash: hash
-                     },
-                     success: function() {
-                        yesCallback.add(selectGame);
-                        $("#leave-game-dlg").dialog("open");
-                     }
+                  $.post("waitingroom.php", {
+                     action: "leave",
+                     game: gameName,
+                     hash: hash
+                  }, function() {
+                     yesCallback.add(selectGame);
+                     $("#leave-game-dlg").dialog("open");
                   });
                }
             });
