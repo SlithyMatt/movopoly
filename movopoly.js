@@ -2,6 +2,7 @@
 
 function reset() {
    $(".latent").hide();
+   okCallback.empty();
    yesCallback.empty();
    noCallback.empty();
 }
@@ -55,7 +56,7 @@ function selectGame() {
    pendingLoop = setInterval(getPending, 1000);
    // TODO in-progress list
    $("#go-new-btn").click(function() {
-      clearInterval(currentLoop);
+      clearInterval(pendingLoop);
       newGame();
    });
 }
@@ -108,42 +109,76 @@ function newGame() {
 function waitGame(gameName) {
    reset();
    $(".gamename").text(gameName);
-   $("#waiting-room, #cancel-btn").show();
+   $("#waiting-room").show();
    var waitingLoop;
    let getWaitingRoom = function() {
       $.getJSON("waitingroom.php", {game: gameName}, function(status) {
-         $("#waiting-players").empty();
-         $("#cancel-btn").click(function() {
+         if (status.started) {
             clearInterval(waitingLoop);
+            playGame(gameName);
+         }
+         $("#waiting-players").empty();
+         if (status.players.length == 0) {
+            clearInterval(waitingLoop);
+            okCallback.add(selectGame);
+            $("#game-canceled-dlg").dialog("open");
+         } else {
+            let txtColor = "FireBrick";
+            for (player in status.players) {
+               $("#waiting-players").append("<li style=\"color=" + txtColor + ";\">" + player + "</li>");
+               txtColor = "Black";
+            }
             let hash = getCookie("hash");
-            if (status.originatorHash == hash) {
-               $.post("waitingroom.php", {
-                  action: "cancel",
-                  game: gameName,
-                  hash: hash
-               }, function() {
-                  yesCallback.add(selectGame);
-                  $("#cancel-game-dlg").dialog("open");
-               });
-            } else {
-               $.ajax({
-                  type: "PUT",
-                  url: "waitingroom.php",
-                  data: {
+            if ((status.originatorHash == hash) && (status.players.length >= 2)) {
+               $("#start-btn").show().click(function() {
+                  $.post("waitingroom.php", {
+                     action: "start",
                      game: gameName,
                      hash: hash
-                  },
-                  success: function() {
-                     yesCallback.add(selectGame);
-                     $("#leave-game-dlg").dialog("open");
-                  }
+                  }, function() {
+                     clearInterval(waitingLoop);
+                     playGame(gameName);
+                  }).fail(function(xhr) {
+                     errorDialog(xhr);
+                  });
                });
             }
-         });
+            $("#cancel-btn").show().click(function() {
+               clearInterval(waitingLoop);
+               if (status.originatorHash == hash) {
+                  $.post("waitingroom.php", {
+                     action: "cancel",
+                     game: gameName,
+                     hash: hash
+                  }, function() {
+                     yesCallback.add(selectGame);
+                     $("#cancel-game-dlg").dialog("open");
+                  });
+               } else {
+                  $.ajax({
+                     type: "PUT",
+                     url: "waitingroom.php",
+                     data: {
+                        game: gameName,
+                        hash: hash
+                     },
+                     success: function() {
+                        yesCallback.add(selectGame);
+                        $("#leave-game-dlg").dialog("open");
+                     }
+                  });
+               }
+            });
+         }
       });
    };
    getWaitingRoom();
    waitingLoop = setInterval(getWaitingRoom, 1000);
+
+}
+
+function playGame(gameName) {
+   reset();
 
 }
 
@@ -153,6 +188,7 @@ function errorDialog (xhr) {
    $("#error-dlg").dialog("open");
 }
 
+var okCallback = $.Callbacks();
 var yesCallback = $.Callbacks();
 var noCallback = $.Callbacks();
 
@@ -169,6 +205,7 @@ $(document).ready(function() {
             text: "OK",
             click: function() {
                $(this).dialog("close");
+               okCallback.fire();
             }
          }
       ]

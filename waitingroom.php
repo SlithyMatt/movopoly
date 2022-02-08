@@ -99,11 +99,14 @@
 	} else if ($_SERVER["REQUEST_METHOD"] == "GET") {
 		$game = $_REQUEST["game"];
 
-		$sql = "SELECT originator FROM games WHERE name='" . $game . "'";
+		$sql = "SELECT originator,started FROM games WHERE name='" . $game . "'";
 		$result = $conn->query($sql);
 		$hash = "";
+		$started = NULL;
 		if ($result->num_rows > 0) {
-			$hash = $result->fetch_assoc()["originator"];
+			$row = $result->fetch_assoc();
+			$hash = $row["originator"];
+			$started = $row["started"];
 		}
 
 		$sql = "SELECT name,hash FROM players WHERE game='" . $game . "'";
@@ -120,6 +123,7 @@
 		}
 
 		$response = array("originatorHash"=>$hash,
+								"started"=>$started,
 								"players"=>$players);
 
 		echo json_encode($response);
