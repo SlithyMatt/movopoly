@@ -15,7 +15,7 @@
 		$action = $_REQUEST["action"];
 		$game = $_REQUEST["game"];
 		$hash = $_REQUEST["hash"];
-		$sql = "SELECT originator,started FROM games WHERE name='" . $game . "'";
+		$sql = "SELECT originator,started FROM games WHERE name=\"" . $game . "\"";
 		$result = $conn->query($sql);
 
 		if ($result->num_rows == 0) {
@@ -33,7 +33,7 @@
 					http_response_code(403);
 					die("Game is already started: " . $game);
 				}
-				$sql = "SELECT id,hash FROM players WHERE game='" . $game . "'";
+				$sql = "SELECT id,hash FROM players WHERE game=\"" . $game . "\"";
 				$result = $conn->query($sql);
 
 				$num_players = $result->num_rows;
@@ -50,25 +50,25 @@
 					}
 				}
 				$time = date("Y-m-d H:i:s");
-				$sql = "UPDATE games SET current='" . $players[0]
-					. "', started='" . $time . "' WHERE name='" . $game . "'";
+				$sql = "UPDATE games SET current=\"" . $players[0]
+					. "\", started=\"" . $time . "\" WHERE name=\"" . $game . "\"";
 				$conn->query($sql);
 
 				for ($i = 0; $i < $num_players-1; $i++) {
-					$sql = "UPDATE players SET next='" . $players[i+1]
-						. "' WHERE id='" . $players[i] . "'";
+					$sql = "UPDATE players SET next=\"" . $players[i+1]
+						. "\" WHERE id=\"" . $players[i] . "\"";
 					$conn->query($sql);
 				}
-				$sql = "UPDATE players SET next='" . $players[0]
-					. "' WHERE id='" . $players[$num_players-1] . "'";
+				$sql = "UPDATE players SET next=\"" . $players[0]
+					. "\" WHERE id=\"" . $players[$num_players-1] . "\"";
 				$conn->query($sql);
 
 
 				break;
 			case "cancel":
-				$sql = "DELETE FROM games WHERE name='" . $game . "'";
+				$sql = "DELETE FROM games WHERE name=\"" . $game . "\"";
 				$conn->query($sql);
-				$sql = "DELETE FROM players WHERE game='" . $game . "'";
+				$sql = "DELETE FROM players WHERE game=\"" . $game . "\"";
 				$conn->query($sql);
 				break;
 			default:
@@ -78,7 +78,7 @@
 	} else if ($_SERVER["REQUEST_METHOD"] == "PUT") {
 		$game = $_REQUEST["game"];
 		$hash = $_REQUEST["hash"];
-		$sql = "SELECT originator,started FROM games WHERE name='" . $game . "'";
+		$sql = "SELECT originator,started FROM games WHERE name=\"" . $game . "\"";
 		$result = $conn->query($sql);
 
 		if ($result->num_rows == 0) {
@@ -94,12 +94,12 @@
 			http_response_code(403);
 			die("You cannot leave game in progress: " . $game);
 		}
-		$sql = "DELETE FROM players WHERE game='" . $game . "' AND hash=' . $hash ."'";
+		$sql = "DELETE FROM players WHERE game=\"" . $game . "\" AND hash=\"" . $hash ."\"";
 		$conn->query($sql);
 	} else if ($_SERVER["REQUEST_METHOD"] == "GET") {
 		$game = $_REQUEST["game"];
 
-		$sql = "SELECT originator,started FROM games WHERE name='" . $game . "'";
+		$sql = "SELECT originator,started FROM games WHERE name=\"" . $game . "\"";
 		$result = $conn->query($sql);
 		$hash = "";
 		$started = NULL;
@@ -109,7 +109,7 @@
 			$started = $row["started"];
 		}
 
-		$sql = "SELECT name,hash FROM players WHERE game='" . $game . "'";
+		$sql = "SELECT name,hash FROM players WHERE game=\"" . $game . "\"";
 		$result = $conn->query($sql);
 		$players = array();
 		if ($result->num_rows > 0) {

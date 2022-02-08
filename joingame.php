@@ -13,7 +13,7 @@
 
 	if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		$game = $_REQUEST["game"];
-		$sql = "SELECT * FROM games WHERE name='" . $game . "'";
+		$sql = "SELECT * FROM games WHERE name=\"" . $game . "\"";
 		$result = $conn->query($sql);
 
 		if ($result->num_rows == 0) {
@@ -21,14 +21,14 @@
 			die("Unknown game: " . $game);
 		}
 
-		$sql = "SELECT * FROM players WHERE game='" . $game . "'";
+		$sql = "SELECT * FROM players WHERE game=\"" . $game . "\"";
 		$result = $conn->query($sql);
-		
+
 		if ($result->num_rows == 0) {
-			$sql = "INSERT INTO players(id,name,hash,game) VALUES (uuid(),'"
-				. $_REQUEST["name"] . "','"
-				. $_REQUEST["hash"] . "','"
-				. $game . "')";
+			$sql = "INSERT INTO players(id,name,hash,game) VALUES (uuid(),\""
+				. $_REQUEST["name"] . "\",\""
+				. $_REQUEST["hash"] . "\",\""
+				. $game . "\")";
 			$conn->query($sql);
 		}
 	}
