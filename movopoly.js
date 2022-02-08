@@ -125,7 +125,7 @@ function waitGame(gameName) {
          } else {
             let txtColor = "FireBrick";
             for (let player in status.players) {
-               $("#waiting-players").append("<li style=\"color=" + txtColor + ";\">" + player + "</li>");
+               $("#waiting-players").append("<span style=\"color=" + txtColor + ";\">" + player + "</span><br>");
                txtColor = "Black";
             }
             let hash = getCookie("hash");

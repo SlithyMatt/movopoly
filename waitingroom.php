@@ -124,7 +124,7 @@
 
 		$response = array("originatorHash"=>$hash,
 								"started"=>$started,
-								"players"=>$players);
+								"players"=>array_values($players));
 
 		echo json_encode($response);
 	}
