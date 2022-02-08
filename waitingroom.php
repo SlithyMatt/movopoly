@@ -108,18 +108,18 @@
 
 		$sql = "SELECT name,hash FROM players WHERE game='" . $game . "'";
 		$result = $conn->query($sql);
-		$origname = "";
 		$players = array();
 		if ($result->num_rows > 0) {
 			while ($row = $result->fetch_assoc()) {
 				if ($row["hash"] == $hash) {
-					$origname = $row["name"];
+					array_unshift($players,$row["name"]);
+				} else {
+					array_push($players,$row["name"]);
 				}
-				array_push($players,$row["name"]);
 			}
 		}
 
-		$response = array("originatorName"=>$origname,"originatorHash"=>$hash,
+		$response = array("originatorHash"=>$hash,
 								"players"=>$players);
 
 		echo json_encode($response);

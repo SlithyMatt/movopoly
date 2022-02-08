@@ -1,9 +1,9 @@
 "use strict";
 
-var currentLoop;
-
 function reset() {
    $(".latent").hide();
+   yesCallback.empty();
+   noCallback.empty();
 }
 
 function newName() {
@@ -15,7 +15,7 @@ function newName() {
          if (username.includes("<") || (username.includes(">"))) {
             nameErrorDialog("Names cannot include &lt; or &gt; characters");
          } else {
-            $(".username").html(username);
+            $(".username").text(username);
             refreshCookies(username);
             selectGame();
          }
@@ -31,6 +31,8 @@ function selectGame() {
    $("#banner-img").attr("src","movopoly_banner.png");
    $(".banner-text").css("display","inline");
    $("#select-game").show();
+   var pendingLoop;
+   var progressLoop;
    let getPending = function() {
       $.getJSON("newgame.php", function(games) {
          $("#pending-games").empty();
@@ -42,7 +44,7 @@ function selectGame() {
                   "\">Join</button> " + games[i] + "<br>");
             }
             $(".pending-btn").button().click(function() {
-               clearInterval(currentLoop);
+               clearInterval(pendingLoop);
                let index = $(this).attr("id").substr(7);
                waitGame(games[index]);
             });
@@ -50,7 +52,8 @@ function selectGame() {
       });
    };
    getPending();
-   currentLoop = setInterval(getPending, 1000);
+   pendingLoop = setInterval(getPending, 1000);
+   // TODO in-progress list
    $("#go-new-btn").click(function() {
       clearInterval(currentLoop);
       newGame();
@@ -104,15 +107,54 @@ function newGame() {
 
 function waitGame(gameName) {
    reset();
-   $(".gamename").html(gameName);
-   
+   $(".gamename").text(gameName);
+   $("#waiting-room, #cancel-btn").show();
+   var waitingLoop;
+   let getWaitingRoom = function() {
+      $.getJSON("waitingroom.php", {game: gameName}, function(status) {
+         $("#waiting-players").empty();
+         $("#cancel-btn").click(function() {
+            clearInterval(waitingLoop);
+            let hash = getCookie("hash");
+            if (status.originatorHash == hash) {
+               $.post("waitingroom.php", {
+                  action: "cancel",
+                  game: gameName,
+                  hash: hash
+               }, function() {
+                  yesCallback.add(selectGame);
+                  $("#cancel-game-dlg").dialog("open");
+               });
+            } else {
+               $.ajax({
+                  type: "PUT",
+                  url: "waitingroom.php",
+                  data: {
+                     game: gameName,
+                     hash: hash
+                  },
+                  success: function() {
+                     yesCallback.add(selectGame);
+                     $("#leave-game-dlg").dialog("open");
+                  }
+               });
+            }
+         });
+      });
+   };
+   getWaitingRoom();
+   waitingLoop = setInterval(getWaitingRoom, 1000);
+
 }
 
 function errorDialog (xhr) {
-   $("#error-code").html(xhr.status);
+   $("#error-code").text(xhr.status);
    $("#error-text").html(xhr.responseText)
    $("#error-dlg").dialog("open");
 }
+
+var yesCallback = $.Callbacks();
+var noCallback = $.Callbacks();
 
 $(document).ready(function() {
    // init UI components
@@ -131,6 +173,27 @@ $(document).ready(function() {
          }
       ]
    });
+   $(".yes-no-dlg").dialog({
+      autoOpen: false,
+      draggable: false,
+      dialogClass: "no-close",
+      buttons: [
+         {
+            text: "Yes",
+            click: function() {
+               $(this).dialog("close");
+               yesCallback.fire();
+            }
+         },
+         {
+            text: "No",
+            click: function() {
+               $(this).dialog("close");
+               noCallback.fire();
+            }
+         }
+      ]
+   });
    $("#clear-btn").click(function() {
       $("#text-form-input").val("");
    });
@@ -143,7 +206,7 @@ $(document).ready(function() {
 
    let username = getCookie("username");
    if (username != "") {
-      $(".username").html(username);
+      $(".username").text(username);
       $("#welcome-back, #yes-btn, #no-btn").show();
       $("#yes-btn").click(selectGame);
       $("#no-btn").click(newName);
