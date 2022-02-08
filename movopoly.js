@@ -47,7 +47,17 @@ function selectGame() {
             $(".pending-btn").button().click(function() {
                clearInterval(pendingLoop);
                let index = $(this).attr("id").substr(7);
-               waitGame(games[index]);
+               let game = games[index];
+               $.post("joingame.php", {
+                  game: game,
+                  name: getCookie("username"),
+                  hash: getCookie("hash")
+               }, function() {
+                  waitGame(game);
+               }).fail(function(xhr) {
+                  errorDialog(xhr);
+               });
+
             });
          }
       });
