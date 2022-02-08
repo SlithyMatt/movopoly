@@ -124,7 +124,8 @@ function waitGame(gameName) {
             $("#game-canceled-dlg").dialog("open");
          } else {
             let txtColor = "FireBrick";
-            for (let player in status.players) {
+            for (let i in status.players) {
+               let player = status.players[i];
                $("#waiting-players").append("<span style=\"color=" + txtColor + ";\">" + player + "</span><br>");
                txtColor = "Black";
             }
