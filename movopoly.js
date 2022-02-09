@@ -28,13 +28,13 @@ function newName() {
 
 function selectGame() {
    reset();
+   $(".gamename").empty();
    $("#title-bar").css("height",77);
    $("#banner-img").attr("src","movopoly_banner.png");
    $(".banner-text").css("display","inline");
    $("#select-game").show();
-   var pendingLoop;
-   var progressLoop;
-   let getPending = function() {
+   var gameLoop;
+   let getGames = function() {
       $.getJSON("newgame.php", function(games) {
          $("#pending-games").empty();
          if (games.length > 0) {
@@ -45,7 +45,7 @@ function selectGame() {
                   "\">Join</button> " + games[i] + "<br>");
             }
             $(".pending-btn").button().click(function() {
-               clearInterval(pendingLoop);
+               clearInterval(gameLoop);
                let index = $(this).attr("id").substr(7);
                let game = games[index];
                $.post("joingame.php", {
@@ -61,12 +61,32 @@ function selectGame() {
             });
          }
       });
+      $.getJSON("activegames.php", {
+         hash: getCookie("hash")
+      }, function(games) {
+         $("#active-games").empty();
+         if (games.length > 0) {
+            $("#active-games").append("<h3>Active Games:</h3>");
+            for (let i=0; i < games.length; i++) {
+               $("#active-games").append(
+                  "<button class=\"ui-button-inline active-btn\" id=\"active" + i +
+                  "\">Play</button> " + games[i] + "<br>");
+            }
+            $(".active-btn").button().click(function() {
+               clearInterval(gameLoop);
+               let index = $(this).attr("id").substr(6);
+               let gameName = games[index];
+               $(".gamename").text(gameName);
+               playGame(gameName);
+            });
+         }
+      });
    };
-   getPending();
-   pendingLoop = setInterval(getPending, 1000);
+   getGames();
+   gameLoop = setInterval(getGames, 1000);
    // TODO in-progress list
    $("#go-new-btn").click(function() {
-      clearInterval(pendingLoop);
+      clearInterval(gameLoop);
       newGame();
    });
 }
@@ -186,7 +206,7 @@ function waitGame(gameName) {
 
 function playGame(gameName) {
    reset();
-
+   $("#game-space").show();
 }
 
 function errorDialog (xhr) {

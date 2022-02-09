@@ -69,8 +69,8 @@
 					$conn->query($sql);
 
 					for ($i = 0; $i < $num_players-1; $i++) {
-						$sql = "UPDATE players SET next=\"" . $players[i+1]
-							. "\" WHERE id=\"" . $players[i] . "\"";
+						$sql = "UPDATE players SET next=\"" . $players[$i+1]
+							. "\" WHERE id=\"" . $players[$i] . "\"";
 						$conn->query($sql);
 					}
 					$sql = "UPDATE players SET next=\"" . $players[0]

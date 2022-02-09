@@ -48,7 +48,7 @@
 		$conn->query($sql);
 
 	} else if ($_SERVER["REQUEST_METHOD"] == "GET") {
-		$sql = "SELECT name FROM games";
+		$sql = "SELECT name FROM games WHERE started IS NULL";
 		$result = $conn->query($sql);
 		$games = array();
 		while ($row = $result->fetch_assoc()) {
