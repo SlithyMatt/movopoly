@@ -16,7 +16,7 @@
 
 
 	<div id="title-bar" class="ui-widget">
-		<img id="banner-img" src="movopoly_logo_small.png">
+		<img id="banner-img" src="images/movopoly_logo_small.png">
 		<span class="username banner-text banner-text-line1"></span>
 		<span class="gamename banner-text banner-text-line2"></span>
 	</div>
@@ -53,7 +53,13 @@
 	</div>
 
 	<div class="ui-widget latent" id="game-space">
-		This is the game!
+		<div id="status-bar">
+			Money: $<span id="status-money"></span><span id="money-effect"></span><br>
+			Current Player: <span id="current-player"></span>, Next: <span id="next-player"></span>
+			<button class="ui-button-inline" id="props-btn">Properties</button>
+		</div>
+		<h3>Your Current Space:</h3>
+		<div id="space-indicator"></div>
 	</div>
 
 	<!-- Reused UI Elements -->
@@ -102,6 +108,12 @@
 	<div id="game-canceled-dlg" class="msg-dlg">
 		This game has been canceled.<br>
 		Please join another or start a new game.
+	</div>
+
+	<div id="roll-dlg" class="msg-dlg">
+		It's your turn!
+		<div id="die-div"></div>
+		<div id="roll-msg">Tap the die to roll.</div>
 	</div>
 
 </body>

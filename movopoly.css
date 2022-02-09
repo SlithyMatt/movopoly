@@ -71,3 +71,22 @@ h3 {
    top: 0;
    left: 0;
 }
+
+#props-btn {
+   padding: 3px 3px;
+   font-size: 12px;
+}
+
+#current-player, #next-player {
+   font-weight: bold;
+}
+
+#space-indicator {
+   align: center;
+}
+
+#die-div {
+   height: 100px;
+   width: 100px;
+   background-image: url("images/die1.png");
+}

@@ -30,7 +30,7 @@ function selectGame() {
    reset();
    $(".gamename").empty();
    $("#title-bar").css("height",77);
-   $("#banner-img").attr("src","movopoly_banner.png");
+   $("#banner-img").attr("src","images/movopoly_banner.png");
    $(".banner-text").css("display","inline");
    $("#select-game").show();
    var gameLoop;
@@ -214,7 +214,46 @@ function waitGame(gameName) {
 
 function playGame(gameName) {
    reset();
+   let hash = getCookie("hash");
+   var statusLoop;
+   $("#props-btn").off("click").click(function() {
+      clearInterval(statusLoop);
+      viewProperties(gameName);
+   });
    $("#game-space").show();
+
+   statusLoop = function() {
+      $.getJSON("status.php",{
+         game: gameName,
+         hash: hash
+      }, function(status) {
+         $("#status-money").text(status.money);
+         $("#money-effect").html(status.moneyEffect);
+         $("#current-player").text(status.currentPlayer);
+         $("#next-player").text(status.nextPlayer);
+         $("#space-indicator").html("<h2>" + status.spaceName + "</h2><img src=\"images/"
+            + status.spaceImage + "\">");
+         if (status.roll) {
+            rollDialog(gameName, status.roll);
+         }
+      });
+   };
+   statusLoop();
+   setInterval(statusLoop,1000);
+
+}
+
+function rollDialog(gameName, roll) {
+   $("#roll-msg").text("Tap the die to roll.");
+   $("div.msg-dlg button").hide();
+   $("#die-div").css("background-image","url(\"images/die" + roll + ".png\")").click(function() {
+      
+   });
+}
+
+function viewProperties(gameName) {
+   reset();
+
 }
 
 function errorDialog (xhr) {
