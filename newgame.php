@@ -41,10 +41,15 @@
 			. $_REQUEST["originatorHash"] . "\")";
 		$conn->query($sql);
 
-		$sql = "INSERT INTO players(id,name,hash,game) VALUES (uuid(),\""
+		$sql = "SELECT id FROM spaces WHERE type=0";
+		$result = $conn->query($sql);
+		$go_space = $result->fetch_assoc()["id"];
+
+		$sql = "INSERT INTO players(id,name,hash,game,space) VALUES (uuid(),\""
 			. $_REQUEST["originatorName"] . "\",\""
 			. $_REQUEST["originatorHash"] . "\",\""
-			. $gamename . "\")";
+			. $gamename . "\",\""
+			. $go_space . "\")";
 		$conn->query($sql);
 
 	} else if ($_SERVER["REQUEST_METHOD"] == "GET") {

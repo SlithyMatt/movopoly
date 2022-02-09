@@ -26,10 +26,19 @@
 		$result = $conn->query($sql);
 
 		if ($result->num_rows == 0) {
-			$sql = "INSERT INTO players(id,name,hash,game) VALUES (uuid(),\""
+			$sql = "SELECT id FROM spaces WHERE type=0";
+			$result = $conn->query($sql);
+			$go_space = $result->fetch_assoc()["id"];
+
+			$sql = "INSERT INTO players(id,name,hash,game,space) VALUES (uuid(),\""
 				. $_REQUEST["name"] . "\",\""
 				. $hash . "\",\""
-				. $game . "\")";
+				. $game . "\",\""
+				. $go_space . "\")";
+			$conn->query($sql);
+		} else {
+			$sql = "UPDATE players SET name=\"" . name
+				. "\" WHERE id=\"" . $result->fetch_assoc()["id"] . "\"";
 			$conn->query($sql);
 		}
 	}
