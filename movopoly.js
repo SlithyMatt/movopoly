@@ -140,62 +140,70 @@ function waitGame(gameName) {
    reset();
    $(".gamename").text(gameName);
    $("#waiting-room").show();
+   let hash = getCookie("hash");
    var waitingLoop;
+   $("#start-btn").click(function() {
+      $.post("waitingroom.php", {
+         action: "start",
+         game: gameName,
+         hash: hash
+      }, function() {
+         clearInterval(waitingLoop);
+         playGame(gameName);
+      }).fail(function(xhr) {
+         errorDialog(xhr);
+      });
+   });
+   let originator = "";
+   $("#cancel-btn").click(function() {
+      clearInterval(waitingLoop);
+      if (originator == hash) {
+         yesCallback.add(function () {
+            $.post("waitingroom.php", {
+               action: "cancel",
+               game: gameName,
+               hash: hash
+            }, selectGame);
+         });
+         $("#cancel-game-dlg").dialog("open");
+      } else {
+         yesCallback.add(function () {
+            $.post("waitingroom.php", {
+               action: "leave",
+               game: gameName,
+               hash: hash
+            }, selectGame);
+         });
+         $("#leave-game-dlg").dialog("open");
+      }
+   });
    let getWaitingRoom = function() {
       $.getJSON("waitingroom.php", {game: gameName}, function(status) {
+         originator = status.originatorHash;
          if (status.started) {
             clearInterval(waitingLoop);
             playGame(gameName);
-         }
-         $("#waiting-players").empty();
-         if (status.players.length == 0) {
-            clearInterval(waitingLoop);
-            okCallback.add(selectGame);
-            $("#game-canceled-dlg").dialog("open");
          } else {
-            let txtColor = "FireBrick";
-            for (let i in status.players) {
-               let player = status.players[i];
-               $("#waiting-players").append("<span style=\"color:" + txtColor + ";\">" + player + "</span><br>");
-               txtColor = "Black";
-            }
-            let hash = getCookie("hash");
-            if ((status.originatorHash == hash) && (status.players.length >= 2)) {
-               $("#start-btn").show().click(function() {
-                  $.post("waitingroom.php", {
-                     action: "start",
-                     game: gameName,
-                     hash: hash
-                  }, function() {
-                     clearInterval(waitingLoop);
-                     playGame(gameName);
-                  }).fail(function(xhr) {
-                     errorDialog(xhr);
-                  });
-               });
-            }
-            $("#cancel-btn").show().click(function() {
+            $("#waiting-players").empty();
+            if (status.players.length == 0) {
                clearInterval(waitingLoop);
-               if (status.originatorHash == hash) {
-                  yesCallback.add(function () {
-                     $.post("waitingroom.php", {
-                        action: "cancel",
-                        game: gameName,
-                        hash: hash
-                     }, selectGame);
-                  });
-                  $("#cancel-game-dlg").dialog("open");
-               } else {
-                  yesCallback.add(function () {
-                     $.post("waitingroom.php", {
-                        action: "leave",
-                        game: gameName,
-                        hash: hash
-                     }, selectGame);
-                  });
-                  $("#leave-game-dlg").dialog("open");
+               okCallback.add(selectGame);
+               $("#game-canceled-dlg").dialog("open");
+               $("#cancel-btn, #start-btn").hide();
+            } else {
+               let txtColor = "FireBrick";
+               for (let i in status.players) {
+                  let player = status.players[i];
+                  $("#waiting-players").append("<span style=\"color:" + txtColor + ";\">" + player + "</span><br>");
+                  txtColor = "Black";
                }
-            });
+               if ((status.originatorHash == hash) && (status.players.length >= 2)) {
+                  $("#start-btn").show();
+               } else {
+                  $("#start-btn").hide();
+               }
+               $("#cancel-btn").show();
+            }
          }
       });
    };
@@ -213,6 +221,11 @@ function errorDialog (xhr) {
    $("#error-code").text(xhr.status);
    $("#error-text").html(xhr.responseText)
    $("#error-dlg").dialog("open");
+}
+
+function nameErrorDialog(reason) {
+   $("#name-error-reason").text(reason);
+   $("#name-error-dlg").dialog("open");
 }
 
 var okCallback = $.Callbacks();
