@@ -23,29 +23,27 @@
 								"moneyEffect"=>"",  // TODO add column
 								"turnState"=>$player["state"]);
 
-		$sql = "SELECT current FROM games WHERE name=\"" . $game . "\"";
+		$sql = "SELECT current,roll FROM games WHERE name=\"" . $game . "\"";
 		$result = $conn->query($sql);
-		$currentid = $result->fetch_assoc()["current"];
+		$row = $result->fetch_assoc();
+		$currentid = $row["current"];
+		$response["roll"] = $row["roll"];
 
 		$nextid = "";
 		if ($currentid == $player["id"]) {
 			$response["currentPlayer"] = "YOU";
 			$nextid = $player["next"];
 		} else {
-			$sql = "SELECT name,next FROM players WHERE id=\"" . $currentid . "\"";
+			$sql = "SELECT name,next FROM players WHERE id=\"" . $currentid . "\""
 			$result = $conn->query($sql);
 			$row = $result->fetch_assoc();
 			$response["currentPlayer"] = $row["name"];
 			$nextid = $row["next"];
 		}
 
-		if ($nextid == $player["id"]) {
-			$response["nextPlayer"] = "YOU";
-		} else {
-			$sql = "SELECT name FROM players WHERE id=\"" . $nextid . "\"";
-			$result = $conn->query($sql);
-			$response["nextPlayer"] = $result->fetch_assoc()["name"];
-		}		
+		$sql = "SELECT name FROM players WHERE id=\"" . $currentid . "\""
+		$result = $conn->query($sql);
+		$response["nextPlayer"] = $result->fetch_assoc()["name"];
 
 		$sql = "SELECT name,imgfilename FROM spaces WHERE id=\"" . $player["space"] . "\"";
 		$result = $conn->query($sql);
