@@ -1,17 +1,17 @@
 <?php
-	$servername = "localhost";
-	$username = "movopoly";
-	$password = "m0v0p0ly";
-	$dbname = "movopoly";
-
-	// Create connection
-	$conn = new mysqli($servername, $username, $password, $dbname);
-	// Check connection
-	if ($conn->connect_error) {
-	  die("Connection failed: " . $conn->connect_error);
-	}
-
 	if ($_SERVER["REQUEST_METHOD"] == "POST") {
+		$servername = "localhost";
+		$username = "movopoly";
+		$password = "m0v0p0ly";
+		$dbname = "movopoly";
+
+		// Create connection
+		$conn = new mysqli($servername, $username, $password, $dbname);
+		// Check connection
+		if ($conn->connect_error) {
+		  die("Connection failed: " . $conn->connect_error);
+		}
+
 		$game = $_REQUEST["game"];
 		$hash = $_REQUEST["hash"];
 		$sql = "SELECT * FROM games WHERE name=\"" . $game . "\"";

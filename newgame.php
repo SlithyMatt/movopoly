@@ -45,11 +45,11 @@
 		$result = $conn->query($sql);
 		$go_space = $result->fetch_assoc()["id"];
 
-		$sql = "INSERT INTO players(id,name,hash,game,space) VALUES (uuid(),\""
+		$sql = "INSERT INTO players(id,name,hash,game,space,state) VALUES (uuid(),\""
 			. $_REQUEST["originatorName"] . "\",\""
 			. $_REQUEST["originatorHash"] . "\",\""
 			. $gamename . "\",\""
-			. $go_space . "\")";
+			. $go_space . "\", \"roll\")";
 		$conn->query($sql);
 
 	} else if ($_SERVER["REQUEST_METHOD"] == "GET") {
