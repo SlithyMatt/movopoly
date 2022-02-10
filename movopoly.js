@@ -221,9 +221,16 @@ function playGame(gameName) {
       viewProperties(gameName);
    });
    $("#game-space").show();
-
+   $("#yes-btn").click(function() {
+      $.post("endturn.php", {
+         game: gameName,
+         hash: hash
+      }, function() {
+         $("#yes-btn").hide();
+      });
+   });
    statusLoop = function() {
-      $.getJSON("status.php",{
+      $.getJSON("status.php", {
          game: gameName,
          hash: hash
       }, function(status) {
@@ -233,8 +240,25 @@ function playGame(gameName) {
          $("#next-player").text(status.nextPlayer);
          $("#space-indicator").html("<h2>" + status.spaceName + "</h2><img src=\"images/"
             + status.spaceImage + "\">");
-         if (status.roll) {
-            rollDialog(gameName, status.roll);
+         switch (status.turnState) {
+            case "roll":
+               rollDialog(gameName, status.roll);
+               break;
+            case "forSale":
+               forSaleDialog(gameName);
+               break;
+            case "rent":
+               rentDialog(gameName);
+               break;
+            case "paid":
+               $("#game-info").html("You are renting this property.<br>Are you done with your turn?");
+               $("#yes-btn").show();
+            case "own":
+               $("#game-info").html("You own this property.<br>Are you done with your turn?");
+               $("#yes-btn").show();
+               break;
+            default:
+               $("#game-info").text("Waiting for your turn...");
          }
       });
    };
@@ -244,11 +268,37 @@ function playGame(gameName) {
 }
 
 function rollDialog(gameName, roll) {
-   $("#roll-msg").text("Tap the die to roll.");
-   $("div.msg-dlg button").hide();
-   $("#die-div").css("background-image","url(\"images/die" + roll + ".png\")").click(function() {
-      
-   });
+   if (!$("#roll-dlg").dialog("isOpen")) {
+      $("#roll-msg").text("Tap the die to roll.");
+      $("div.msg-dlg button").hide();
+      $("#die-div").css("background-image","url(\"images/die" + roll + ".png\")").click(function() {
+         $("#roll-msg").empty();
+         let frames = 20;
+         var dieFrameLoop;
+         let finalRoll = 0;
+         let space;
+         let nextFrame = function() {
+            if ((--frames <= 0) && (finalRoll != 0)) {
+               clearInterval(dieFrameLoop);
+               roll = finalRoll;
+               $("#roll-msg").text("Move to " + space + "!");
+               $("div.msg-dlg button").show();
+            } else {
+               roll = (Math.random() * 6) | 0 + 1
+            }
+            $("#die-div").css("background-image","url(\"images/die" + roll + ".png\")");
+         };
+         setInterval(nextFrame,100);
+         $.getJSON("roll.php", {
+            game: gameName,
+            hash: getCookie("hash")
+         }, function(response) {
+            finalRoll = response.roll;
+            space = response.space;
+         });
+      });
+      $("#roll-dlg").dialog("open");
+   }
 }
 
 function viewProperties(gameName) {
