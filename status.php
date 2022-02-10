@@ -34,14 +34,14 @@
 			$response["currentPlayer"] = "YOU";
 			$nextid = $player["next"];
 		} else {
-			$sql = "SELECT name,next FROM players WHERE id=\"" . $currentid . "\""
+			$sql = "SELECT name,next FROM players WHERE id=\"" . $currentid . "\"";
 			$result = $conn->query($sql);
 			$row = $result->fetch_assoc();
 			$response["currentPlayer"] = $row["name"];
 			$nextid = $row["next"];
 		}
 
-		$sql = "SELECT name FROM players WHERE id=\"" . $currentid . "\""
+		$sql = "SELECT name FROM players WHERE id=\"" . $currentid . "\"";
 		$result = $conn->query($sql);
 		$response["nextPlayer"] = $result->fetch_assoc()["name"];
 
