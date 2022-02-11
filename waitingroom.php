@@ -76,6 +76,16 @@
 					$sql = "UPDATE players SET next=\"" . $players[0]
 						. "\" WHERE id=\"" . $players[$num_players-1] . "\"";
 					$conn->query($sql);
+
+					$sql = "SELECT id FROM spaces WHERE type=1";
+					$result = $conn->query($sql);
+					$sql = "";
+					while ($row = $result->fetch_assoc()) {
+						$sql = $sql . "INSERT INTO deeds (id,property,game) VALUES (uuid(),\""
+							. $row["id"] . "\",\""
+							. $game . "\");";
+					}
+					$conn->query($sql);
 					break;
 				case "cancel":
 					$sql = "DELETE FROM games WHERE name=\"" . $game . "\"";

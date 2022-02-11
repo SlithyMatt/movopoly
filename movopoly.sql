@@ -1,21 +1,27 @@
-CREATE DATABASE  IF NOT EXISTS `movopoly` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `movopoly`;
--- MySQL dump 10.13  Distrib 8.0.22, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.28, for Linux (x86_64)
 --
--- Host: 127.0.0.1    Database: movopoly
+-- Host: localhost    Database: movopoly
 -- ------------------------------------------------------
--- Server version	8.0.22-0ubuntu0.20.04.3
+-- Server version	8.0.28-0ubuntu0.20.04.3
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Current Database: `movopoly`
+--
+
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `movopoly` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+
+USE `movopoly`;
 
 --
 -- Table structure for table `chancecards`
@@ -49,6 +55,32 @@ INSERT INTO `chancecards` VALUES ('18b19d1a-8921-40a6-98bb-d3b23bc3cf4b','Go sho
 UNLOCK TABLES;
 
 --
+-- Table structure for table `decks`
+--
+
+DROP TABLE IF EXISTS `decks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `decks` (
+  `order` int NOT NULL,
+  `game` char(36) DEFAULT NULL,
+  `card` char(36) DEFAULT NULL,
+  `id` char(36) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `decks`
+--
+
+LOCK TABLES `decks` WRITE;
+/*!40000 ALTER TABLE `decks` DISABLE KEYS */;
+/*!40000 ALTER TABLE `decks` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `deeds`
 --
 
@@ -57,10 +89,11 @@ DROP TABLE IF EXISTS `deeds`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `deeds` (
   `id` char(36) NOT NULL,
-  `player` char(36) NOT NULL,
+  `player` char(32) DEFAULT NULL COMMENT 'Hash for player',
   `property` char(36) NOT NULL,
   `house` tinyint NOT NULL DEFAULT '0',
   `mortgage` tinyint NOT NULL DEFAULT '0',
+  `game` varchar(32) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -83,12 +116,13 @@ DROP TABLE IF EXISTS `games`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `games` (
-  `id` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `started` datetime DEFAULT NULL,
-  `name` varchar(25) NOT NULL,
-  `current` char(36) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
+  `name` varchar(32) NOT NULL,
+  `current` char(36) DEFAULT NULL,
+  `originator` char(32) DEFAULT NULL,
+  `roll` int DEFAULT '5',
+  PRIMARY KEY (`name`),
+  UNIQUE KEY `name_UNIQUE` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -110,10 +144,13 @@ DROP TABLE IF EXISTS `players`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `players` (
   `id` char(36) NOT NULL,
-  `name` varchar(12) NOT NULL,
+  `name` varchar(32) NOT NULL,
   `game` char(36) NOT NULL,
   `money` int NOT NULL DEFAULT '250',
   `next` char(36) DEFAULT NULL,
+  `hash` char(32) DEFAULT NULL,
+  `space` char(36) DEFAULT NULL,
+  `state` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -181,34 +218,8 @@ CREATE TABLE `spaces` (
 
 LOCK TABLES `spaces` WRITE;
 /*!40000 ALTER TABLE `spaces` DISABLE KEYS */;
-INSERT INTO `spaces` VALUES ('32bba774-7ed3-4064-8e07-df53620dc0fb',1,'Dining Room','90dbce43-8bfb-4fda-bbdb-66f1c9585ae3','dining.png'),('3a980054-ff63-4050-8567-7837bc5f52e7',1,'Office','cf1eb92a-b9b6-413f-8f4c-2e7b89ea5b2c','office.png'),('3c762da4-6f49-4a1e-94ec-2ebd1b042dfe',1,'Play Room','4e18970a-49a1-4dc7-a6e8-681d006ab7c2','playroom.png'),('4e18970a-49a1-4dc7-a6e8-681d006ab7c2',2,'Play Room Bathroom','32bba774-7ed3-4064-8e07-df53620dc0fb','chance.png'),('5349321e-8fe6-4119-ad72-db7baeb4ba36',1,'Dressing Room','78d1f3ac-e3fa-4df8-a435-e5c6ba53d7d5','dressing.png'),('78d1f3ac-e3fa-4df8-a435-e5c6ba53d7d5',2,'Middle Bathroom','3a980054-ff63-4050-8567-7837bc5f52e7','chance.png'),('90dbce43-8bfb-4fda-bbdb-66f1c9585ae3',1,'Kitchen','f66486eb-92b7-4da2-a294-b18c0bb8a6e2','kitchen.png'),('9b5267ff-3397-47ea-bdf5-568d6d6e3b76',1,'Mom and Dad\'s Bedroom','b87f91a5-eead-45cb-9ac2-0782086e6924','momdad.png'),('b87f91a5-eead-45cb-9ac2-0782086e6924',2,'Mom and Dad\'s Bathroom','5349321e-8fe6-4119-ad72-db7baeb4ba36','chance.png'),('cf1eb92a-b9b6-413f-8f4c-2e7b89ea5b2c',1,'Living Room','3c762da4-6f49-4a1e-94ec-2ebd1b042dfe','living.png'),('f66486eb-92b7-4da2-a294-b18c0bb8a6e2',0,'Kids\' Bedroom','9b5267ff-3397-47ea-bdf5-568d6d6e3b76','go.png');
+INSERT INTO `spaces` VALUES ('32bba774-7ed3-4064-8e07-df53620dc0fb',1,'Dining Room','90dbce43-8bfb-4fda-bbdb-66f1c9585ae3','dining.png'),('3a980054-ff63-4050-8567-7837bc5f52e7',1,'Office','b74da992-275e-4911-9abb-2e411b6c0bd6','office.png'),('5349321e-8fe6-4119-ad72-db7baeb4ba36',1,'Cici\'s Room','b87f91a5-eead-45cb-9ac2-0782086e6924','cici.png'),('78d1f3ac-e3fa-4df8-a435-e5c6ba53d7d5',2,'Downstairs Bathroom','32bba774-7ed3-4064-8e07-df53620dc0fb','chance.png'),('90dbce43-8bfb-4fda-bbdb-66f1c9585ae3',1,'Kitchen','3a980054-ff63-4050-8567-7837bc5f52e7','kitchen.png'),('9b5267ff-3397-47ea-bdf5-568d6d6e3b76',1,'Mom and Dad\'s Bedroom','cf1eb92a-b9b6-413f-8f4c-2e7b89ea5b2c','momdad.png'),('b74da992-275e-4911-9abb-2e411b6c0bd6',1,'Laundry Room','f66486eb-92b7-4da2-a294-b18c0bb8a6e2','laundry.png'),('b87f91a5-eead-45cb-9ac2-0782086e6924',2,'Upstairs Bathroom','9b5267ff-3397-47ea-bdf5-568d6d6e3b76','chance.png'),('cf1eb92a-b9b6-413f-8f4c-2e7b89ea5b2c',1,'Living Room','78d1f3ac-e3fa-4df8-a435-e5c6ba53d7d5','living.png'),('f66486eb-92b7-4da2-a294-b18c0bb8a6e2',0,'Ellie and Libby\'s Bedroom','5349321e-8fe6-4119-ad72-db7baeb4ba36','go.png');
 /*!40000 ALTER TABLE `spaces` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `spacetypes`
---
-
-DROP TABLE IF EXISTS `spacetypes`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `spacetypes` (
-  `name` varchar(45) NOT NULL,
-  `id` int NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name_UNIQUE` (`name`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `spacetypes`
---
-
-LOCK TABLES `spacetypes` WRITE;
-/*!40000 ALTER TABLE `spacetypes` DISABLE KEYS */;
-INSERT INTO `spacetypes` VALUES ('chance',2),('go',0),('property',1);
-/*!40000 ALTER TABLE `spacetypes` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -220,4 +231,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-12-26 22:57:38
+-- Dump completed on 2022-02-11  1:08:28

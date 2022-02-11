@@ -23,11 +23,11 @@
 
 		$sql = "SELECT current FROM games WHERE name=\"" . $game . "\"";
 		$result = $conn->query($sql);
-		$playerid = $result->fetch_assoc()[current];
+		$playerid = $result->fetch_assoc()["current"];
 
 		$sql = "SELECT space FROM players WHERE id=\"" . $playerid . "\"";
 		$result = $conn->query($sql);
-		$space = $result->fetch_assoc()[current];
+		$space = $result->fetch_assoc()["space"];
 
 		$sql = "SELECT id,name,next FROM spaces";
 		$result = $conn->query($sql);

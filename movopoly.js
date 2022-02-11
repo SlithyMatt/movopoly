@@ -242,7 +242,12 @@ function playGame(gameName) {
             + status.spaceImage + "\">");
          switch (status.turnState) {
             case "roll":
+               clearInterval(statusLoop);
                rollDialog(gameName, status.roll);
+               okCallback.add(function() {
+                  setInterval(statusLoop,1000);
+                  okCallback.empty();
+               });
                break;
             case "forSale":
                forSaleDialog(gameName);
@@ -255,6 +260,15 @@ function playGame(gameName) {
                $("#yes-btn").show();
             case "own":
                $("#game-info").html("You own this property.<br>Are you done with your turn?");
+               $("#yes-btn").show();
+               break;
+            case "chance":
+               changeDialog(gameName);
+               $("#game-info").html("Are you done with your turn?");
+               $("#yes-btn").show();
+               break;
+            case "go":
+               $("#game-info").html("You collected your salary.<br>Are you done with your turn?");
                $("#yes-btn").show();
                break;
             default:
@@ -273,7 +287,7 @@ function rollDialog(gameName, roll) {
       $("div.msg-dlg button").hide();
       $("#die-div").css("background-image","url(\"images/die" + roll + ".png\")").click(function() {
          $("#roll-msg").empty();
-         let frames = 20;
+         let frames = 10;
          var dieFrameLoop;
          let finalRoll = 0;
          let space;
@@ -288,7 +302,7 @@ function rollDialog(gameName, roll) {
             }
             $("#die-div").css("background-image","url(\"images/die" + roll + ".png\")");
          };
-         setInterval(nextFrame,100);
+         setInterval(nextFrame,200);
          $.getJSON("roll.php", {
             game: gameName,
             hash: getCookie("hash")
