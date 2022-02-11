@@ -29,11 +29,11 @@
 		$result = $conn->query($sql);
 		$space = $result->fetch_assoc()["space"];
 
-		$sql = "SELECT id,name,next FROM spaces";
+		$sql = "SELECT id,name,next,type FROM spaces";
 		$result = $conn->query($sql);
 		$board = array();
 		while ($row = $result->fetch_assoc()) {
-			$board[$row["id"]] = array("name"=>$row["name"], "next"=>$row["next"]);
+			$board[$row["id"]] = $row;
 		}
 
 		for ($i = 0; $i < $roll; $i++) {
@@ -42,8 +42,28 @@
 
 		$response["space"] = $board[$space]["name"];
 
-		// TODO determine state
-		$state = "";
+		switch ($board[$space]["type"] == 1) {
+			case 0:
+				$state = "go";
+				break;
+			case 1:
+				$sql = "SELECT player FROM deeds WHERE property=\"" . $space . "\"";
+				$result = $conn->query($sql);
+				$owner = $result->fetch_assoc()["player"];
+				if ($owner == $hash) {
+					$state = "own";
+				} else if ($owner == NULL) {
+					$state = "forSale";
+				} else {
+					$state = "rent";
+				}
+				break;
+			case 2:
+				$state = "chance";
+				break;
+			default:
+				$state = "";
+		}
 
 		$sql = "UPDATE players SET space=\"" . $space . "\", state=\"" . $state . "\" WHERE id=\"" . $playerid . "\"";
 		$conn->query($sql);

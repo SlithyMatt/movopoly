@@ -263,7 +263,7 @@ function playGame(gameName) {
                $("#yes-btn").show();
                break;
             case "chance":
-               changeDialog(gameName);
+               chanceDialog(gameName);
                $("#game-info").html("Are you done with your turn?");
                $("#yes-btn").show();
                break;
@@ -279,6 +279,24 @@ function playGame(gameName) {
    statusLoop();
    setInterval(statusLoop,1000);
 
+}
+
+function forSaleDialog(gameName) {
+   if (!$("#for-sale-dialog").dialog("isOpen")) {
+      $("#for-sale-dialog").dialog("open");
+   }
+}
+
+function rentDialog(gameName) {
+   if (!$("#rent-dialog").dialog("isOpen")) {
+      $("#rent-dialog").dialog("open");
+   }
+}
+
+function chanceDialog(gameName) {
+   if (!$("#chance-dialog").dialog("isOpen")) {
+      $("#chance-dialog").dialog("open");
+   }
 }
 
 function rollDialog(gameName, roll) {
