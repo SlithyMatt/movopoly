@@ -30,6 +30,8 @@
 </head>
 <body>
    <h1>Movopoly Admin Panel</h1>
+   <a href="index.html">Back to game</a><br>
+   <a href="admin.php">Refresh</a>
    <h3>If you don't know what you're doing please leave!</h3>
    &nbsp;<br>
    <?php
