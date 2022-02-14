@@ -17,8 +17,14 @@
 
       if (array_key_exists("game",$_REQUEST)) {
          $game = $_REQUEST["game"];
-
-
+         $sql = "DELETE FROM games WHERE name=\"" . $game . "\"";
+         $conn->query($sql);
+         $sql = "DELETE FROM players WHERE game=\"" . $game . "\"";
+         $conn->query($sql);
+         $sql = "DELETE FROM deeds WHERE game=\"" . $game . "\"";
+         $conn->query($sql);
+         $sql = "DELETE FROM decks WHERE game=\"" . $game . "\"";
+         $conn->query($sql);
       }
    ?>
 </head>
@@ -31,7 +37,9 @@
       $result = $conn->query($sql);
       if ($result->num_rows > 0) {
          echo "<b>Delete Games:</b>";
-
+         while ($row = $result->fetch_assoc()) {
+            echo "<a href=\"admin.php?game=" . urlencode($game) . "\">" . $game . "</a><br>";
+         }
       }
    ?>
 </body>
