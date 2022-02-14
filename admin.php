@@ -33,11 +33,12 @@
    <h3>If you don't know what you're doing please leave!</h3>
    &nbsp;<br>
    <?php
-      $sql = "SELECT name FROM games WHERE started IS NULL";
+      $sql = "SELECT name FROM games";
       $result = $conn->query($sql);
       if ($result->num_rows > 0) {
-         echo "<b>Delete Games:</b>";
+         echo "<b>Delete Games:</b><br>";
          while ($row = $result->fetch_assoc()) {
+            $game = $row["name"];
             echo "<a href=\"admin.php?game=" . urlencode($game) . "\">" . $game . "</a><br>";
          }
       }
